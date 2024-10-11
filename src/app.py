@@ -15,6 +15,18 @@ CORS(app)
 # create the jackson family object
 jackson_family = FamilyStructure("Jackson")
 
+def new_member(name, age, numbers):
+    return {
+        "first_name": name,
+        "last_name": jackson_family.last_name,
+        "age": age,
+        "lucky_numbers": numbers
+    }
+
+jackson_family.add_member(new_member("John", 33, [7, 13, 22]))
+jackson_family.add_member(new_member("Jane", 35, [10, 14, 3]))
+jackson_family.add_member(new_member("Jimmy", 5, [1,]))
+
 # Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
@@ -26,16 +38,24 @@ def sitemap():
     return generate_sitemap(app)
 
 @app.route('/members', methods=['GET'])
-def handle_hello():
-
+def get_members():
     # this is how you can use the Family datastructure by calling its methods
     members = jackson_family.get_all_members()
+    members_data = list(map(lambda person: {"id": person['id'], "first_name": person['first_name']}, members))
     response_body = {
-        "hello": "world",
-        "family": members
+        "Family members": members_data
     }
+    return jsonify(response_body), 200
 
-
+@app.route('/member/<int:member_id>', methods=['GET'])
+def get_single_member(member_id):
+    member = jackson_family.get_member(member_id)
+    response_body = {
+        "id": member['id'],
+        "first_name": member['first_name'],
+        "age": member['age'],
+        "lucky_numbers": member['lucky_numbers']
+    }
     return jsonify(response_body), 200
 
 # this only runs if `$ python src/app.py` is executed
