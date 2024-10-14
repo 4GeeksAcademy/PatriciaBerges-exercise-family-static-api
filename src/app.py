@@ -59,12 +59,13 @@ def get_single_member(member_id):
     return jsonify(response_body), 200
 
 @app.route('/member', methods=['POST'])
-def handle_post_member(member):
-    if member['first_name'] not in member:
+def handle_post_member():
+    member = request.get_json()
+    if 'first_name' not in member:
         return ("New member must have a first_name"), 400
-    elif member['age'] not in member:
+    elif 'age' not in member:
         return ("New member must have age"), 400
-    elif member['lucky_numbers'] not in member:
+    elif 'lucky_numbers' not in member:
         return ("New member must have lucky_numbers"), 400
     else:
         jackson_family.add_member(member)
