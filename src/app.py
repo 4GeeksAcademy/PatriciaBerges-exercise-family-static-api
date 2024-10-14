@@ -58,6 +58,25 @@ def get_single_member(member_id):
     }
     return jsonify(response_body), 200
 
+@app.route('/member', methods=['POST'])
+def handle_post_member(member):
+    if member['first_name'] not in member:
+        return ("New member must have a first_name"), 400
+    elif member['age'] not in member:
+        return ("New member must have age"), 400
+    elif member['lucky_numbers'] not in member:
+        return ("New member must have lucky_numbers"), 400
+    else:
+        jackson_family.add_member(member)
+        response_body = jackson_family.get_all_members()
+        return jsonify(response_body), 200
+    
+@app.route('/member/<int:member_id>', methods=['DELETE'])
+def handle_delete(member_id):
+    jackson_family.delete_member(member_id)
+    response_body = jackson_family.get_all_members()
+    return jsonify(response_body), 200
+
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
