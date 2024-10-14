@@ -63,14 +63,13 @@ def handle_post_member():
     member = request.get_json()
     if 'first_name' not in member:
         return ("New member must have a first_name"), 400
-    elif 'age' not in member:
+    if 'age' not in member:
         return ("New member must have age"), 400
-    elif 'lucky_numbers' not in member:
+    if 'lucky_numbers' not in member or len(member['lucky_numbers'])<1:
         return ("New member must have lucky_numbers"), 400
-    else:
-        jackson_family.add_member(member)
-        response_body = jackson_family.get_all_members()
-        return jsonify(response_body), 200
+    jackson_family.add_member(member)
+    response_body = jackson_family.get_all_members()
+    return jsonify(response_body), 200
     
 @app.route('/member/<int:member_id>', methods=['DELETE'])
 def handle_delete(member_id):
